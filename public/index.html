@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f2">
+  <meta name="description" content="Documentación para integrar la API de ventas.">
+  <title>API de ventas · Documentación</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #19231f;
+      --muted: #68746e;
+      --line: #dfe6e0;
+      --paper: #fff;
+      --canvas: #f4f6f2;
+      --green: #126345;
+      --green-dark: #0d4b34;
+      --green-soft: #e8f3ec;
+      --code: #17231e;
+      --orange: #a45e17;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); }
+    a { color: var(--green); }
+    code, pre { font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace; }
+    code { font-size: .92em; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 68px;
+      padding: 0 clamp(20px, 5vw, 76px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .82);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 750; letter-spacing: -.03em; }
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--green);
+      color: white;
+      font-size: 18px;
+    }
+    .top-link { color: var(--muted); font-size: 13px; text-decoration: none; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 790px);
+      gap: clamp(36px, 7vw, 100px);
+      max-width: 1230px;
+      margin: 0 auto;
+      padding: 58px 32px 100px;
+    }
+    aside { position: sticky; top: 30px; align-self: start; }
+    .nav-label { margin: 0 0 14px; color: #929b95; font-size: 10px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    nav { display: grid; gap: 5px; }
+    nav a {
+      padding: 9px 12px;
+      border-left: 2px solid transparent;
+      border-radius: 0 7px 7px 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    nav a:hover { border-color: var(--green); background: var(--green-soft); color: var(--green-dark); }
+
+    main { min-width: 0; }
+    .eyebrow { color: var(--green); font-size: 11px; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { margin: 13px 0 15px; font-size: clamp(38px, 5vw, 56px); letter-spacing: -.055em; line-height: 1.04; }
+    .intro { max-width: 590px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.7; }
+    .base-card {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 32px;
+      padding: 17px 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+    }
+    .base-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .base-card code { color: var(--green-dark); font-size: 14px; font-weight: 650; }
+    .badge { padding: 6px 9px; border-radius: 99px; background: var(--green-soft); color: var(--green-dark); font-size: 11px; font-weight: 700; }
+
+    section { scroll-margin-top: 28px; margin-top: 58px; }
+    .section-kicker { margin: 0 0 8px; color: var(--green); font-size: 11px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    h2 { margin: 0 0 12px; font-size: 25px; letter-spacing: -.035em; }
+    h3 { margin: 0; font-size: 15px; letter-spacing: -.015em; }
+    .section-copy { margin: 0 0 22px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    .endpoint {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+    }
+    .endpoint + .endpoint { margin-top: 16px; }
+    .endpoint-head { display: flex; align-items: center; gap: 12px; padding: 17px 19px; border-bottom: 1px solid var(--line); }
+    .method { min-width: 52px; padding: 6px 8px; border-radius: 6px; background: var(--green-soft); color: var(--green-dark); font-size: 11px; font-weight: 800; text-align: center; }
+    .method.post { background: #fff1dd; color: var(--orange); }
+    .endpoint-path { font-size: 14px; font-weight: 650; overflow-wrap: anywhere; }
+    .endpoint-body { padding: 18px 20px 20px; }
+    .endpoint-body > p { margin: 0 0 17px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 9px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: #f8faf8; color: var(--muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    td code { color: var(--green-dark); font-weight: 600; }
+    .required { color: var(--green); font-weight: 700; }
+
+    .code-label { margin: 18px 0 8px; color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+    pre { overflow-x: auto; margin: 0; padding: 16px 18px; border: 1px solid #24372e; border-radius: 9px; background: var(--code); color: #e5eee8; font-size: 12px; line-height: 1.75; }
+    .response { margin-top: 12px; }
+    .note { margin-top: 15px; padding: 12px 14px; border-left: 3px solid #a9cbb5; border-radius: 0 7px 7px 0; background: #f3f8f4; color: #506158; font-size: 12px; line-height: 1.65; }
+    .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .info-card { padding: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+    .info-card p { margin: 7px 0 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    footer { margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--line); color: #87928b; font-size: 11px; }
+
+    @media (max-width: 760px) {
+      .layout { display: block; padding: 36px 20px 70px; }
+      aside { position: static; margin-bottom: 38px; }
+      nav { display: flex; flex-wrap: wrap; gap: 3px; }
+      nav a { padding: 8px 10px; border-left: 0; border-radius: 7px; }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">↗</span> API de ventas</div>
+    <a class="top-link" href="#endpoints">Referencia de endpoints&nbsp; ↓</a>
+  </header>
+
+  <div class="layout">
+    <aside aria-label="Navegación de documentación">
+      <p class="nav-label">En esta página</p>
+      <nav>
+        <a href="#inicio">Introducción</a>
+        <a href="#endpoints">Endpoints</a>
+        <a href="#consolidado">Consultar consolidado</a>
+        <a href="#registrar">Registrar venta</a>
+        <a href="#respuestas">Respuestas y errores</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div id="inicio">
+        <div class="eyebrow">Documentación para integradores</div>
+        <h1>API de ventas</h1>
+        <p class="intro">Consulta el consolidado de ventas por sucursal y año, o registra una nueva venta. Esta referencia describe las rutas disponibles y los formatos que espera el servicio.</p>
+        <div class="base-card">
+          <div>
+            <span class="base-label">URL base local</span>
+            <code>http://localhost:3000</code>
+          </div>
+          <span class="badge">JSON · Sin autenticación</span>
+        </div>
+      </div>
+
+      <section id="endpoints">
+        <p class="section-kicker">Referencia</p>
+        <h2>Endpoints</h2>
+        <p class="section-copy">La API está versionada bajo <code>/api/v1</code>. En producción, reemplaza el host local por el dominio donde esté desplegado el servicio.</p>
+        <div class="endpoint">
+          <div class="endpoint-head"><span class="method">GET</span><code class="endpoint-path">/api/v1/ventas/consolidado</code></div>
+          <div class="endpoint-body"><p>Obtiene el consolidado de ventas para una sucursal y un año.</p></div>
+        </div>
+        <div class="endpoint">
+          <div class="endpoint-head"><span class="method post">POST</span><code class="endpoint-path">/api/v1/ventas</code></div>
+          <div class="endpoint-body"><p>Registra una venta con producto, cliente, cantidad y fecha.</p></div>
+        </div>
+      </section>
+
+      <section id="consolidado">
+        <p class="section-kicker">Consulta de datos</p>
+        <h2>Consultar consolidado</h2>
+        <div class="endpoint">
+          <div class="endpoint-head"><span class="method">GET</span><code class="endpoint-path">/api/v1/ventas/consolidado</code></div>
+          <div class="endpoint-body">
+            <p>Envía ambos parámetros como query string. El servicio ejecuta el procedimiento almacenado de consolidación y devuelve sus filas.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Parámetro</th><th>Tipo esperado</th><th>Requerido</th><th>Descripción</th></tr></thead>
+                <tbody>
+                  <tr><td><code>sucursal</code></td><td>Texto o número</td><td class="required">Sí</td><td>Identificador de la sucursal.</td></tr>
+                  <tr><td><code>anio</code></td><td>Número</td><td class="required">Sí</td><td>Año para el que se solicita el consolidado.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="code-label">Ejemplo de solicitud</div>
+            <pre><code>curl "http://localhost:3000/api/v1/ventas/consolidado?sucursal=1&amp;anio=2025"</code></pre>
+            <div class="code-label">Respuesta · 200 OK</div>
+            <pre><code>{
+  "status": "success",
+  "total_registros": 2,
+  "data": [
+    { "...": "Las columnas dependen del procedimiento de base de datos" },
+    { "...": "..." }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="registrar">
+        <p class="section-kicker">Escritura de datos</p>
+        <h2>Registrar una venta</h2>
+        <div class="endpoint">
+          <div class="endpoint-head"><span class="method post">POST</span><code class="endpoint-path">/api/v1/ventas</code></div>
+          <div class="endpoint-body">
+            <p>Envía un objeto JSON con todos los campos requeridos. El servidor ejecuta el procedimiento almacenado de registro y responde con los datos recibidos.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Campo</th><th>Tipo esperado</th><th>Requerido</th><th>Descripción</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id_producto</code></td><td>Número o texto</td><td class="required">Sí</td><td>Identificador del producto.</td></tr>
+                  <tr><td><code>id_cliente</code></td><td>Número o texto</td><td class="required">Sí</td><td>Identificador del cliente.</td></tr>
+                  <tr><td><code>cantidad</code></td><td>Número</td><td class="required">Sí</td><td>Cantidad vendida. Debe ser un valor distinto de cero.</td></tr>
+                  <tr><td><code>fecha_venta</code></td><td>Texto</td><td class="required">Sí</td><td>Fecha compatible con la columna correspondiente en MySQL.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="code-label">Ejemplo de solicitud</div>
+            <pre><code>curl -X POST "http://localhost:3000/api/v1/ventas" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"id_producto\":12,\"id_cliente\":34,\"cantidad\":2,\"fecha_venta\":\"2025-05-20\"}"</code></pre>
+            <div class="code-label">Respuesta · 201 Created</div>
+            <pre><code>{
+  "status": "success",
+  "message": "Venta registrada exitosamente",
+  "datos_registrados": {
+    "id_producto": 12,
+    "id_cliente": 34,
+    "cantidad": 2,
+    "fecha_venta": "2025-05-20"
+  }
+}</code></pre>
+            <div class="note">El servidor requiere <code>Content-Type: application/json</code>. Los campos se envían al procedimiento de MySQL; el formato y las reglas adicionales de fecha, identificadores y cantidad dependen de la base de datos.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="respuestas">
+        <p class="section-kicker">Protocolo</p>
+        <h2>Respuestas y errores</h2>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>400 · Solicitud inválida</h3>
+            <p>El consolidado requiere <code>sucursal</code> y <code>anio</code>. Para registrar, todos los campos del cuerpo deben estar presentes y tener un valor distinto de cero/vacío.</p>
+            <div class="code-label">GET · Faltan parámetros</div>
+            <pre class="response"><code>{
+  "error": "Bad Request",
+  "message": "Debe Enviar Ambos Parametros"
+}</code></pre>
+            <div class="code-label">POST · Faltan campos</div>
+            <pre class="response"><code>{
+  "error": "Bad request",
+  "message": "Todos los campos son obligatorios"
+}</code></pre>
+          </div>
+          <div class="info-card">
+            <h3>500 · Error del servidor</h3>
+            <p>La consulta o el registro encontró un error en MySQL. Revisa la disponibilidad de la base de datos y los valores enviados.</p>
+            <div class="code-label">GET · Error de consulta</div>
+            <pre class="response"><code>{
+  "error": "Internal Server Error",
+  "message": "Error En MySQL"
+}</code></pre>
+            <div class="code-label">POST · Error de registro</div>
+            <pre class="response"><code>{
+  "error": "Internal Server Error",
+  "message": "Error al registrar la venta en la base de datos"
+}</code></pre>
+          </div>
+        </div>
+        <footer>La API recibe JSON y responde con JSON. El puerto predeterminado es <code>3000</code>; puede cambiarse mediante la variable de entorno <code>PORT</code>.</footer>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
